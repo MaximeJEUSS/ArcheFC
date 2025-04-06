@@ -8,36 +8,44 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  username  String
+  id        String       @id @default(cuid())
+  username  String       @unique
+  email     String       @unique
   password  String
-  role      Role     @default(STAFF)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  role      Role         @default(USER)
+  firstName String
+  lastName  String
+  news      News[]
+  posts     SocialPost[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 }
 
 model Player {
-  id        String   @id @default(uuid())
-  firstName String
-  lastName  String
-  position  String
-  number    Int?
-  stats     Json?
-  teamId    String
-  team      Team     @relation(fields: [teamId], references: [id])
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  position    String
+  number      Int
+  birthDate   DateTime
+  nationality String
+  teamId      String
+  team        Team     @relation(fields: [teamId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Team {
+  id        String   @id @default(cuid())
+  name      String
+  category  String
+  players   Player[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Team {
-  id      String   @id @default(uuid())
-  name    String
-  players Player[]
-}
-
 model News {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   title     String
   content   String
   imageUrl  String?
@@ -48,9 +56,8 @@ model News {
 }
 
 model SocialPost {
-  id        String   @id @default(uuid())
+  id        String   @id @default(cuid())
   content   String
-  imageUrl  String?
   platform  Platform
   authorId  String
   author    User     @relation(fields: [authorId], references: [id])
@@ -66,6 +73,6 @@ enum Role {
 
 enum Platform {
   FACEBOOK
-  INSTAGRAM
   TWITTER
+  INSTAGRAM
 } 
