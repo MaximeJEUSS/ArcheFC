@@ -327,7 +327,11 @@ const Classement: React.FC = () => {
                         sx={{ 
                           cursor: 'pointer',
                           '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
-                          backgroundColor: isArcheTeam(equipe.equipe.short_name) ? 'rgba(255, 193, 7, 0.1)' : 'inherit'
+                          backgroundColor: isArcheTeam(equipe.equipe.short_name) ? 'rgba(255, 215, 0, 0.3)' : 'inherit',
+                          '& td': {
+                            color: isArcheTeam(equipe.equipe.short_name) ? colors.archeBlue : 'inherit',
+                            fontWeight: isArcheTeam(equipe.equipe.short_name) ? 'bold' : 'normal'
+                          }
                         }}
                       >
                         <TableCell sx={{ 

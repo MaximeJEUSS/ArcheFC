@@ -102,10 +102,12 @@ const Calendrier: React.FC<CalendrierProps> = ({ matches, loading, error }) => {
             {/* Équipes et Score */}
             <Box 
               sx={{ 
-                display: 'flex',
+                display: 'grid',
+                gridTemplateColumns: { xs: 'minmax(0, 1fr) auto minmax(0, 1fr)', sm: '1fr auto 1fr' },
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: { xs: 1, sm: 2 }
+                gap: { xs: 1, sm: 2 },
+                width: '100%',
+                minWidth: '100%'
               }}
             >
               {/* Équipe domicile */}
@@ -114,15 +116,18 @@ const Calendrier: React.FC<CalendrierProps> = ({ matches, loading, error }) => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 1,
-                  flex: 1,
-                  justifyContent: 'flex-end'
+                  justifyContent: 'flex-end',
+                  textAlign: 'right',
+                  minWidth: 0
                 }}
               >
                 <Typography 
                   sx={{ 
                     fontSize: { xs: '0.8rem', sm: '0.9rem' },
                     fontWeight: 600,
-                    textAlign: 'right'
+                    textAlign: 'right',
+                    wordBreak: 'break-word',
+                    maxWidth: '100%'
                   }}
                 >
                   {match.home.short_name}
@@ -133,7 +138,8 @@ const Calendrier: React.FC<CalendrierProps> = ({ matches, loading, error }) => {
                     alt={match.home.short_name}
                     sx={{ 
                       width: { xs: 24, sm: 28 },
-                      height: { xs: 24, sm: 28 }
+                      height: { xs: 24, sm: 28 },
+                      flexShrink: 0
                     }}
                   />
                 )}
@@ -142,21 +148,29 @@ const Calendrier: React.FC<CalendrierProps> = ({ matches, loading, error }) => {
               {/* Score */}
               <Box 
                 sx={{ 
-                  px: { xs: 2, sm: 3 },
+                  px: { xs: 1, sm: 3 },
                   py: { xs: 0.5, sm: 1 },
-                  minWidth: { xs: '60px', sm: '80px' },
+                  minWidth: { xs: '70px', sm: '100px' },
+                  width: { xs: '70px', sm: '100px' },
                   background: isPastMatch ? colors.archeGradient : colors.archeGradientYellow,
                   borderRadius: '8px',
                   display: 'flex',
                   justifyContent: 'center',
-                  alignItems: 'center'
+                  alignItems: 'center',
+                  flexShrink: 0,
+                  mx: 'auto',
+                  position: 'relative',
+                  left: { xs: '0', sm: 'auto' }
                 }}
               >
                 <Typography 
                   sx={{ 
                     fontSize: { xs: '0.9rem', sm: '1rem' },
                     fontWeight: 'bold',
-                    color: isPastMatch ? colors.archeWhite : colors.archeDark
+                    color: isPastMatch ? colors.archeWhite : colors.archeDark,
+                    textAlign: 'center',
+                    width: '100%',
+                    whiteSpace: 'nowrap'
                   }}
                 >
                   {isPastMatch ? `${match.home_score} - ${match.away_score}` : 'vs'}
@@ -169,7 +183,8 @@ const Calendrier: React.FC<CalendrierProps> = ({ matches, loading, error }) => {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 1,
-                  flex: 1
+                  justifyContent: 'flex-start',
+                  minWidth: 0
                 }}
               >
                 {match.away.club?.logo && (
@@ -178,14 +193,18 @@ const Calendrier: React.FC<CalendrierProps> = ({ matches, loading, error }) => {
                     alt={match.away.short_name}
                     sx={{ 
                       width: { xs: 24, sm: 28 },
-                      height: { xs: 24, sm: 28 }
+                      height: { xs: 24, sm: 28 },
+                      flexShrink: 0
                     }}
                   />
                 )}
                 <Typography 
                   sx={{ 
                     fontSize: { xs: '0.8rem', sm: '0.9rem' },
-                    fontWeight: 600
+                    fontWeight: 600,
+                    textAlign: 'left',
+                    wordBreak: 'break-word',
+                    maxWidth: '100%'
                   }}
                 >
                   {match.away.short_name}
