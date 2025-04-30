@@ -17,7 +17,7 @@ export const createPlayer = async (req: Request, res: Response) => {
       firstName,
       lastName,
       phoneNumber: phoneNumber || null,
-      goals: goals || 0,
+      goals: parseInt(goals) || 0,
       teamId: teamId || null
     };
 
@@ -102,7 +102,7 @@ export const updatePlayer = async (req: Request, res: Response) => {
         firstName,
         lastName,
         phoneNumber: phoneNumber || null,
-        goals: goals || 0,
+        goals: parseInt(goals) || 0,
         teamId: teamId || null
       },
     });
