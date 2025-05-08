@@ -57,6 +57,7 @@ const Classement: React.FC = () => {
   const [selectedTeam, setSelectedTeam] = useState<{ teamId: number; clubId: number; competId: number } | null>(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [currentSubTab, setCurrentSubTab] = useState(0);
+  const initialFetchDone = React.useRef(false);
 
   const fetchClassement = async (teamId: number) => {
     if (classements[teamId]?.length > 0) return;
@@ -174,10 +175,12 @@ const Classement: React.FC = () => {
     return teamName.toLowerCase().includes('arche') || teamName.toLowerCase().includes('chaumes');
   };
 
-  // Charger le premier onglet au montage
   useEffect(() => {
-    fetchClassement(1);
-    fetchMatches(1);
+    if (!initialFetchDone.current) {
+      fetchClassement(1);
+      fetchMatches(1);
+      initialFetchDone.current = true;
+    }
   }, []);
 
   return (

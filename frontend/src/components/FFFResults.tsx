@@ -3,11 +3,29 @@ import { Box, Typography, Paper, CircularProgress, Alert } from '@mui/material';
 
 interface Match {
   id: string;
+  competition: {
+    name: string;
+    cp_no: number;
+  };
+  home: {
+    short_name: string;
+    club: {
+      cl_no: number;
+      logo: string;
+    };
+  };
+  away: {
+    short_name: string;
+    club: {
+      cl_no: number;
+      logo: string;
+    };
+  };
   date: string;
-  homeTeam: string;
-  awayTeam: string;
-  score: string;
-  competition: string;
+  time: string;
+  home_score: number;
+  away_score: number;
+  status: string;
 }
 
 const FFFResults: React.FC = () => {
@@ -18,7 +36,7 @@ const FFFResults: React.FC = () => {
   useEffect(() => {
     const fetchMatches = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/fff/matches');
+        const response = await fetch('/api/fff/matches');
         if (!response.ok) {
           throw new Error('Erreur lors de la récupération des matchs');
         }
@@ -60,17 +78,17 @@ const FFFResults: React.FC = () => {
           <Paper key={match.id} elevation={3} sx={{ p: 2 }}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
               <Box>
-                <Typography variant="subtitle1">{match.competition}</Typography>
+                <Typography variant="subtitle1">{match.competition.name}</Typography>
                 <Typography variant="body2" color="text.secondary">
-                  {new Date(match.date).toLocaleDateString('fr-FR')}
+                  {new Date(match.date).toLocaleDateString('fr-FR')} {match.time}
                 </Typography>
               </Box>
               <Box display="flex" alignItems="center" gap={2}>
-                <Typography variant="h6">{match.homeTeam}</Typography>
+                <Typography variant="h6">{match.home.short_name}</Typography>
                 <Typography variant="h6" color="primary">
-                  {match.score}
+                  {match.home_score} - {match.away_score}
                 </Typography>
-                <Typography variant="h6">{match.awayTeam}</Typography>
+                <Typography variant="h6">{match.away.short_name}</Typography>
               </Box>
             </Box>
           </Paper>

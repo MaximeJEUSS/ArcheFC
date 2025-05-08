@@ -3,7 +3,7 @@ import axiosRetry from 'axios-retry';
 
 const API_URL = 'https://api-dofa.fff.fr/api';
 const MAX_CONCURRENT_REQUESTS = 2; // Nombre maximum de requêtes simultanées
-const REQUEST_DELAY = 1000; // Délai entre les requêtes en ms
+const REQUEST_DELAY = 5000; // Délai entre les requêtes en ms
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes en millisecondes
 
 interface CacheItem<T> {
@@ -241,7 +241,7 @@ axiosRetry(axiosInstance, {
 
 export const fffService = {
   async getMatches(): Promise<Match[]> {
-    const response = await axios.get<Match[]>(`${API_URL}/matches`);
+    const response = await axiosInstance.get<Match[]>(`/matches`);
     return response.data;
   },
 
@@ -256,7 +256,7 @@ export const fffService = {
   },
 
   async getTeamMatches(teamId: string): Promise<Match[]> {
-    const response = await axios.get<Match[]>(`${API_URL}/teams/${teamId}/matches`);
+    const response = await axiosInstance.get<Match[]>(`/teams/${teamId}/matches`);
     return response.data;
   },
 
@@ -273,8 +273,8 @@ export const fffService = {
       let hasNextPage = true;
 
       while (hasNextPage) {
-        const response = await axios.get<MatchesResponse>(
-          `${API_URL}/compets/${competId}/phases/1/poules/${pouleId}/matchs?page=${currentPage}`,
+        const response = await axiosInstance.get<MatchesResponse>(
+          `/compets/${competId}/phases/1/poules/${pouleId}/matchs?page=${currentPage}`,
           {
             timeout: 10000
           }
@@ -317,8 +317,8 @@ export const fffService = {
     }
 
     try {
-      const response = await axios.get<ClassementResponse>(
-        `${API_URL}/compets/${teamConfig.competId}/phases/1/poules/${teamConfig.pouleId}/classement_journees?page=1`,
+      const response = await axiosInstance.get<ClassementResponse>(
+        `/compets/${teamConfig.competId}/phases/1/poules/${teamConfig.pouleId}/classement_journees?page=1`,
         {
           timeout: 10000
         }
@@ -374,8 +374,8 @@ export const fffService = {
     }
 
     try {
-      const response = await axios.get(
-        `${API_URL}/clubs/${clubId}`,
+      const response = await axiosInstance.get(
+        `/clubs/${clubId}`,
         {
           timeout: 10000
         }
@@ -396,8 +396,8 @@ export const fffService = {
     }
 
     try {
-      const response = await axios.get<MatchResultsResponse>(
-        `${API_URL}/clubs/${clubId}/resultat?page=1`,
+      const response = await axiosInstance.get<MatchResultsResponse>(
+        `/clubs/${clubId}/resultat?page=1`,
         {
           timeout: 10000
         }
@@ -418,8 +418,8 @@ export const fffService = {
     }
 
     try {
-      const response = await axios.get<NextMatchesResponse>(
-        `${API_URL}/clubs/${clubId}/calendrier?page=1`,
+      const response = await axiosInstance.get<NextMatchesResponse>(
+        `/clubs/${clubId}/calendrier?page=1`,
         {
           timeout: 10000
         }
