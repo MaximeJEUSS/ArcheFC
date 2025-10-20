@@ -231,7 +231,7 @@ axiosRetry(axiosInstance, {
   retryCondition: (error) => {
     // On retry sur les erreurs 5xx et les erreurs réseau
     return axiosRetry.isNetworkOrIdempotentRequestError(error) || 
-           (error.response && error.response.status >= 500);
+           (error.response?.status && error.response.status >= 500) || false;
   }
 });
 
