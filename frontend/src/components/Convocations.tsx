@@ -261,7 +261,16 @@ export const Convocations: React.FC<ConvocationsProps> = ({ teamId }) => {
   return (
     <Box sx={{ p: 3 }}>
       <Paper sx={{ mb: 3, borderRadius: 2, boxShadow: 2 }}>
-        <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box
+  sx={{
+    p: { xs: 1.5, sm: 2 },
+    display: 'flex',
+    flexDirection: { xs: 'column', sm: 'row' },
+    justifyContent: 'space-between',
+    alignItems: { xs: 'flex-start', sm: 'center' },
+    gap: { xs: 2, sm: 0 },
+  }}
+>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography variant="h4" component="h1" sx={{ fontSize: { xs: '1.5rem', sm: '2rem' } }}>
               Liste des joueurs
