@@ -1,0 +1,72 @@
+.header-container {
+  background-color: var(--arche-blue);
+  color: white;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logo {
+  height: 60px;
+  width: auto;
+}
+
+.club-name {
+  font-family: 'Russo One', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, var(--arche-yellow), #ffd700);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.05em;
+}
+
+.blue-band {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  width: 150%;
+  height: 20px;
+  background-color: var(--arche-blue);
+  z-index: 0;
+  opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .logo {
+    height: 40px;
+  }
+
+  .club-name {
+    font-size: 1.5rem;
+  }
+
+  .blue-band {
+    width: 200%;
+    height: 15px;
+  }
+}

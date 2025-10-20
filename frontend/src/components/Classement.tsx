@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { fffService, ClassementEquipe, TEAMS_CONFIG, Match } from '../services/fffService';
+import { fffService, ClassementEquipe, Match } from '../services/fffService';
+import { getTeamsConfig } from '../services/teamConfigService';
 import { 
   Box, 
   Typography, 
@@ -83,7 +84,9 @@ const Classement: React.FC = () => {
     setError(prev => ({ ...prev, [teamId]: null }));
 
     try {
-      const teamConfig = TEAMS_CONFIG.find(team => team.id === teamId);
+      const teamsConfig = await getTeamsConfig();
+      // id est désormais un string (id technique). Utiliser l'index d'onglet (1..n)
+      const teamConfig = teamsConfig[teamId - 1];
       if (teamConfig) {
         const data = await fffService.getCompetitionMatches(teamConfig.competId, teamConfig.pouleId);
         setMatches(prev => ({ ...prev, [teamId]: data }));
@@ -107,8 +110,10 @@ const Classement: React.FC = () => {
     setCurrentSubTab(newValue);
   };
 
-  const handleRowClick = (teamId: number, clubId: number) => {
-    const teamConfig = TEAMS_CONFIG.find((team: { id: number; competId: string; pouleId: string }) => team.id === teamId);
+  const handleRowClick = async (teamId: number, clubId: number) => {
+    const teamsConfig = await getTeamsConfig();
+    // id est maintenant un string; on utilise l'index (1..n)
+    const teamConfig = teamsConfig[teamId - 1];
     setSelectedTeam(prev => 
       prev?.teamId === teamId && prev?.clubId === clubId ? null : { 
         teamId, 
@@ -177,8 +182,11 @@ const Classement: React.FC = () => {
 
   useEffect(() => {
     if (!initialFetchDone.current) {
-      fetchClassement(1);
-      fetchMatches(1);
+      // Charger les données pour toutes les équipes
+      [1, 2, 3, 4].forEach(teamId => {
+        fetchClassement(teamId);
+        fetchMatches(teamId);
+      });
       initialFetchDone.current = true;
     }
   }, []);
@@ -445,7 +453,7 @@ const Classement: React.FC = () => {
 
           {currentSubTab === 2 && (
             <Box sx={{ mt: 2 }}>
-              <Convocations teamId={teamId.toString()} />
+              <Convocations teamId={teamId} />
             </Box>
           )}
 

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
+import { getTeamsConfig } from './teamConfigService';
 
 const API_URL = 'https://api-dofa.fff.fr/api';
 const MAX_CONCURRENT_REQUESTS = 2; // Nombre maximum de requêtes simultanées
@@ -211,12 +212,7 @@ export interface NextMatchesResponse {
   'hydra:member': NextMatch[];
 }
 
-export const TEAMS_CONFIG = [
-  { id: 1, competId: '420569', pouleId: '2' },
-  { id: 2, competId: '420571', pouleId: '7' },
-  { id: 3, competId: '420572', pouleId: '9' },
-  { id: 4, competId: '420573', pouleId: '8' }
-];
+
 
 // Configuration de axios avec retry
 const axiosInstance = axios.create({
@@ -305,7 +301,9 @@ export const fffService = {
   },
 
   async getTeamClassement(teamId: number): Promise<ClassementEquipe[]> {
-    const teamConfig = TEAMS_CONFIG.find(t => t.id === teamId);
+    const teamsConfig = await getTeamsConfig();
+    // id est un string; utiliser l'index (1..n)
+    const teamConfig = teamsConfig[teamId - 1];
     if (!teamConfig) {
       throw new Error(`Configuration non trouvée pour l'équipe ${teamId}`);
     }
@@ -334,20 +332,23 @@ export const fffService = {
 
   async getAllTeamsClassement(): Promise<{ [key: number]: ClassementEquipe[] }> {
     const classements: { [key: number]: ClassementEquipe[] } = {};
+    const teamsConfig = await getTeamsConfig();
     
-    // Initialiser tous les classements comme vides
-    TEAMS_CONFIG.forEach(team => {
-      classements[team.id] = [];
+    // Initialiser tous les classements comme vides (index 1..n)
+    teamsConfig.forEach((_, index) => {
+      const numericTeamId = index + 1;
+      classements[numericTeamId] = [];
     });
 
     try {
-      const promises = TEAMS_CONFIG.map(async (team) => {
+      const promises = teamsConfig.map(async (_, index) => {
+        const numericTeamId = index + 1;
         try {
-          const classement = await this.getTeamClassement(team.id);
-          return { teamId: team.id, classement };
+          const classement = await this.getTeamClassement(numericTeamId);
+          return { teamId: numericTeamId, classement };
         } catch (error) {
-          console.error(`Erreur lors de la récupération du classement de l'équipe ${team.id}:`, error);
-          return { teamId: team.id, classement: [] };
+          console.error(`Erreur lors de la récupération du classement de l'équipe ${numericTeamId}:`, error);
+          return { teamId: numericTeamId, classement: [] };
         }
       });
 
@@ -437,7 +438,8 @@ export const fffService = {
     results: any;
     calendar: any;
   }> {
-    const teamConfig = TEAMS_CONFIG.find(t => t.id === teamId);
+    const teamsConfig = await getTeamsConfig();
+    const teamConfig = teamsConfig[teamId - 1];
     if (!teamConfig) {
       throw new Error(`Configuration non trouvée pour l'équipe ${teamId}`);
     }

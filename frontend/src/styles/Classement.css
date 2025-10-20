@@ -1,0 +1,72 @@
+.classement-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tabs-container {
+  margin-bottom: 2rem;
+}
+
+.tab-panel {
+  padding: 1rem 0;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.ranking-table th,
+.ranking-table td {
+  padding: 0.75rem;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.ranking-table th {
+  background-color: var(--arche-blue);
+  color: white;
+  font-weight: 600;
+}
+
+.ranking-table tr:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.arche-team {
+  background-color: rgba(255, 215, 0, 0.5);
+}
+
+.team-logo {
+  width: 30px;
+  height: 30px;
+  margin-right: 0.5rem;
+}
+
+.match-date {
+  color: var(--arche-blue);
+  font-weight: 500;
+}
+
+.match-score {
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .classement-container {
+    padding: 1rem;
+  }
+
+  .ranking-table th,
+  .ranking-table td {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .team-logo {
+    width: 20px;
+    height: 20px;
+  }
+}

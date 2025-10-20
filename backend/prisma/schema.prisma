@@ -35,6 +35,8 @@ model Team {
   id        String   @id @default(cuid())
   name      String
   category  String
+  competId  String?  // ID de la compétition FFF
+  pouleId   String?  // ID de la poule FFF
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   players   Player[]

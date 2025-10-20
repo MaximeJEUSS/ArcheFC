@@ -36,12 +36,11 @@ INSERT INTO "User" (id, username, password, role, "createdAt", "updatedAt") VALU
 (3, 'user', '$2a$10$K8L1J9K9K9K9K9K9K9K9K.9K9K9K9K9K9K9K9K9K9K9K9K9K9K9K9K', 'USER', '2025-04-30 21:03:27.645', '2025-04-30 21:03:27.645'),
 (4, 'admin2', '$2a$10$3euPcmQFCiblsJlEBv6Y7.pBV4KhU9wMTKEw9Qr1E/jh/KWqdACie', 'ADMIN', '2025-04-30 21:03:27.645', '2025-04-30 21:03:27.645');
 
--- Insertion des équipes
-INSERT INTO "Team" (id, name, category, "createdAt", "updatedAt") VALUES
-('team1', 'Équipe 1', 'SENIOR', '2025-04-30 21:03:27.627', '2025-04-30 21:03:27.627'),
-('team2', 'Équipe 2', 'SENIOR', '2025-04-30 21:03:27.64', '2025-04-30 21:03:27.64'),
-('team3', 'Équipe 3', 'SENIOR', '2025-04-30 21:03:27.641', '2025-04-30 21:03:27.641'),
-('team4', 'Équipe 4', 'SENIOR', '2025-04-30 21:03:27.641', '2025-04-30 21:03:27.641');
+INSERT INTO "Team" (id, name, category, "createdAt", "updatedAt", "competId", "pouleId") VALUES
+('team1', 'Senior A', 'SENIOR', '2025-04-30 21:03:27.627', '2025-04-30 21:03:27.627', '436121', '4'),
+('team2', 'Senior B', 'SENIOR', '2025-04-30 21:03:27.64', '2025-04-30 21:03:27.64', '436122', '2'),
+('team3', 'Senior C', 'SENIOR', '2025-04-30 21:03:27.641', '2025-04-30 21:03:27.641', '436123', '9'),
+('team4', 'Senior D', 'SENIOR', '2025-04-30 21:03:27.641', '2025-04-30 21:03:27.641', '436124', '9');
 
 -- Insertion des joueurs
 INSERT INTO "Player" (id, "firstName", "lastName", "phoneNumber", goals, "teamId", "createdAt", "updatedAt") VALUES

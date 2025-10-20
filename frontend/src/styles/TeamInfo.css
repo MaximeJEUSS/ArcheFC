@@ -1,0 +1,131 @@
+.team-info-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.club-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.club-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.club-name {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--arche-blue);
+  text-align: center;
+}
+
+.match-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  color: var(--arche-blue);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--arche-yellow);
+}
+
+.match-card {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.match-card:hover {
+  transform: translateY(-2px);
+}
+
+.match-date {
+  color: var(--arche-blue);
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.match-teams {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.team-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+}
+
+.team-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.match-score {
+  font-weight: bold;
+  color: var(--arche-blue);
+  min-width: 60px;
+  text-align: center;
+}
+
+.match-time {
+  color: var(--arche-blue);
+  font-weight: 500;
+  min-width: 60px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .team-info-container {
+    padding: 1rem;
+  }
+
+  .club-logo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .club-name {
+    font-size: 1.5rem;
+  }
+
+  .match-card {
+    padding: 0.75rem;
+  }
+
+  .team-logo {
+    width: 20px;
+    height: 20px;
+  }
+
+  .team-name {
+    font-size: 0.9rem;
+  }
+
+  .match-score,
+  .match-time {
+    font-size: 0.9rem;
+    min-width: 50px;
+  }
+}
