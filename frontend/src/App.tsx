@@ -25,6 +25,8 @@ function App() {
             <Container maxWidth="lg" sx={{ pt: 4, pb: 4, flex: 1 }}>
               <Routes>
                 <Route path="/" element={<Classement />} />
+                <Route path="/team/:teamId" element={<Classement />} />
+                <Route path="/team/:teamId/:subTab" element={<Classement />} />
                 <Route path="/convocations" element={<Convocations />} />
                 <Route path="/admin/players" element={
                   <ProtectedRoute>

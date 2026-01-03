@@ -256,8 +256,9 @@ export const fffService = {
     return response.data;
   },
 
-  async getCompetitionMatches(competId: string, pouleId: string): Promise<Match[]> {
-    const cacheKey = `competition_matches_${competId}_${pouleId}`;
+  async getCompetitionMatches(competId: string, pouleId: string, category?: string): Promise<Match[]> {
+    const phase = category && category.toLowerCase() === 'jeune' ? 2 : 1;
+    const cacheKey = `competition_matches_${competId}_${pouleId}_${phase}`;
     const cachedData = cache.get<Match[]>(cacheKey);
     if (cachedData) {
       return cachedData;
@@ -270,9 +271,9 @@ export const fffService = {
 
       while (hasNextPage) {
         const response = await axiosInstance.get<MatchesResponse>(
-          `/compets/${competId}/phases/1/poules/${pouleId}/matchs?page=${currentPage}`,
+          `/compets/${competId}/phases/${phase}/poules/${pouleId}/matchs?page=${currentPage}`,
           {
-            timeout: 10000
+            timeout: 100000
           }
         );
 
@@ -308,7 +309,8 @@ export const fffService = {
       throw new Error(`Configuration non trouvée pour l'équipe ${teamId}`);
     }
 
-    const cacheKey = `classement_${teamId}`;
+    const phase = teamConfig.category && teamConfig.category.toLowerCase() === 'jeune' ? 2 : 1;
+    const cacheKey = `classement_${teamId}_${phase}`;
     const cachedData = cache.get<ClassementEquipe[]>(cacheKey);
     if (cachedData) {
       return cachedData;
@@ -316,7 +318,7 @@ export const fffService = {
 
     try {
       const response = await axiosInstance.get<ClassementResponse>(
-        `/compets/${teamConfig.competId}/phases/1/poules/${teamConfig.pouleId}/classement_journees?page=1`,
+        `/compets/${teamConfig.competId}/phases/${phase}/poules/${teamConfig.pouleId}/classement_journees?page=1`,
         {
           timeout: 10000
         }

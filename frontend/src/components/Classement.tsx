@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fffService, ClassementEquipe, Match } from '../services/fffService';
 import { getTeamsConfig } from '../services/teamConfigService';
+import { teamService, Team } from '../services/teamService';
 import { 
   Box, 
   Typography, 
@@ -50,14 +52,41 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+// Mapping entre les noms des sous-onglets et leurs indices
+const SUB_TAB_NAMES = ['classement', 'calendrier', 'convocations'] as const;
+type SubTabName = typeof SUB_TAB_NAMES[number];
+
+const SUB_TAB_NAME_TO_INDEX: Record<SubTabName, number> = {
+  'classement': 0,
+  'calendrier': 1,
+  'convocations': 2
+};
+
+const INDEX_TO_SUB_TAB_NAME: Record<number, SubTabName> = {
+  0: 'classement',
+  1: 'calendrier',
+  2: 'convocations'
+};
+
 const Classement: React.FC = () => {
+  const { teamId: teamIdParam, subTab: subTabParam } = useParams<{ teamId?: string; subTab?: string }>();
+  const navigate = useNavigate();
+  
   const [classements, setClassements] = useState<{ [key: number]: ClassementEquipe[] }>({});
   const [matches, setMatches] = useState<{ [key: number]: Match[] }>({});
   const [loading, setLoading] = useState<{ [key: number]: boolean }>({});
   const [error, setError] = useState<{ [key: number]: string | null }>({});
   const [selectedTeam, setSelectedTeam] = useState<{ teamId: number; clubId: number; competId: number } | null>(null);
-  const [currentTab, setCurrentTab] = useState(0);
-  const [currentSubTab, setCurrentSubTab] = useState(0);
+  const [teams, setTeams] = useState<Team[]>([]);
+  
+  // Calculer les valeurs depuis l'URL avec validation
+  const teamIdNum = teamIdParam ? parseInt(teamIdParam) : 1;
+  const subTabName = (subTabParam?.toLowerCase() as SubTabName) || 'classement';
+  const subTabIndex = SUB_TAB_NAME_TO_INDEX[subTabName] ?? 0;
+  const maxTeamIndex = teams.length > 0 ? teams.length - 1 : 0;
+  const currentTab = Math.max(0, Math.min(maxTeamIndex, teamIdNum - 1));
+  const currentSubTab = Math.max(0, Math.min(2, subTabIndex));
+  
   const initialFetchDone = React.useRef(false);
 
   const fetchClassement = async (teamId: number) => {
@@ -88,7 +117,7 @@ const Classement: React.FC = () => {
       // id est désormais un string (id technique). Utiliser l'index d'onglet (1..n)
       const teamConfig = teamsConfig[teamId - 1];
       if (teamConfig) {
-        const data = await fffService.getCompetitionMatches(teamConfig.competId, teamConfig.pouleId);
+        const data = await fffService.getCompetitionMatches(teamConfig.competId, teamConfig.pouleId, teamConfig.category);
         setMatches(prev => ({ ...prev, [teamId]: data }));
       }
     } catch (err) {
@@ -100,14 +129,18 @@ const Classement: React.FC = () => {
   };
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setCurrentTab(newValue);
+    const newTeamId = newValue + 1;
     setSelectedTeam(null);
-    fetchClassement(newValue + 1);
-    fetchMatches(newValue + 1);
+    const currentSubTabName = INDEX_TO_SUB_TAB_NAME[currentSubTab] || 'classement';
+    navigate(`/team/${newTeamId}/${currentSubTabName}`, { replace: true });
+    fetchClassement(newTeamId);
+    fetchMatches(newTeamId);
   };
 
   const handleSubTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setCurrentSubTab(newValue);
+    const teamId = teamIdParam || '1';
+    const subTabName = INDEX_TO_SUB_TAB_NAME[newValue] || 'classement';
+    navigate(`/team/${teamId}/${subTabName}`, { replace: true });
   };
 
   const handleRowClick = async (teamId: number, clubId: number) => {
@@ -180,16 +213,90 @@ const Classement: React.FC = () => {
     return teamName.toLowerCase().includes('arche') || teamName.toLowerCase().includes('chaumes');
   };
 
+  // Rediriger vers l'équipe 1 par défaut si pas de paramètres
   useEffect(() => {
-    if (!initialFetchDone.current) {
-      // Charger les données pour toutes les équipes
-      [1, 2, 3, 4].forEach(teamId => {
+    if (teams.length === 0) return; // Attendre que les équipes soient chargées
+    
+    if (!teamIdParam) {
+      navigate('/team/1/classement', { replace: true });
+      return;
+    }
+    
+    // Valider et corriger les paramètres si nécessaire
+    const teamId = parseInt(teamIdParam);
+    
+    if (teamId < 1 || teamId > teams.length) {
+      navigate('/team/1/classement', { replace: true });
+      return;
+    }
+    
+    // Valider le nom du sous-onglet
+    if (subTabParam) {
+      const subTabNameLower = subTabParam.toLowerCase() as SubTabName;
+      if (!SUB_TAB_NAMES.includes(subTabNameLower)) {
+        navigate(`/team/${teamId}/classement`, { replace: true });
+        return;
+      }
+    } else {
+      // Si pas de sous-onglet spécifié, rediriger vers classement
+      navigate(`/team/${teamId}/classement`, { replace: true });
+      return;
+    }
+  }, [teamIdParam, subTabParam, navigate, teams.length]);
+
+  // Charger les données quand l'équipe change
+  useEffect(() => {
+    if (teamIdParam && teams.length > 0) {
+      const teamId = parseInt(teamIdParam);
+      if (teamId >= 1 && teamId <= teams.length) {
+        fetchClassement(teamId);
+        fetchMatches(teamId);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [teamIdParam, teams.length]);
+
+  // Charger les équipes au montage du composant
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const teamsData = await teamService.getAllTeams();
+        // Filtrer uniquement les équipes qui ont competId et pouleId (nécessaires pour FFF)
+        const teamsWithConfig = teamsData.filter(team => team.competId && team.pouleId);
+        // Trier par nom pour correspondre à l'ordre de getTeamsFFFConfig
+        teamsWithConfig.sort((a, b) => a.name.localeCompare(b.name));
+        setTeams(teamsWithConfig);
+        // Vider le cache de la config FFF pour forcer le rechargement avec toutes les équipes
+        const { clearTeamsConfigCache } = await import('../services/teamConfigService');
+        clearTeamsConfigCache();
+      } catch (error) {
+        console.error('Erreur lors de la récupération des équipes:', error);
+      }
+    };
+    fetchTeams();
+  }, []);
+
+  // Charger les données pour toutes les équipes au premier chargement
+  useEffect(() => {
+    if (!initialFetchDone.current && teams.length > 0) {
+      teams.forEach((_, index) => {
+        const teamId = index + 1;
         fetchClassement(teamId);
         fetchMatches(teamId);
       });
       initialFetchDone.current = true;
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [teams.length]);
+
+  // Afficher un chargement si les équipes ne sont pas encore chargées
+  if (teams.length === 0) {
+    return (
+      <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ mt: 4 }}>
@@ -222,22 +329,27 @@ const Classement: React.FC = () => {
             }
           }}
         >
-          {[1, 2, 3, 4].map((teamId) => (
-            <Tab 
-              key={teamId} 
-              label={`Équipe ${teamId}`} 
-              id={`team-tab-${teamId - 1}`}
-              aria-controls={`team-tabpanel-${teamId - 1}`}
-            />
-          ))}
+          {teams.map((team, index) => {
+            const teamId = index + 1;
+            return (
+              <Tab 
+                key={team.id} 
+                label={team.name} 
+                id={`team-tab-${index}`}
+                aria-controls={`team-tabpanel-${index}`}
+              />
+            );
+          })}
         </Tabs>
         <Box sx={{ px: 2 }}>
           <LoginButton />
         </Box>
       </Box>
 
-      {[1, 2, 3, 4].map((teamId, index) => (
-        <TabPanel key={teamId} value={currentTab} index={index}>
+      {teams.map((team, index) => {
+        const teamId = index + 1;
+        return (
+        <TabPanel key={team.id} value={currentTab} index={index}>
           <Box sx={{ 
             borderBottom: 1, 
             borderColor: 'divider', 
@@ -465,7 +577,8 @@ const Classement: React.FC = () => {
             </Box>
           )}
         </TabPanel>
-      ))}
+        );
+      })}
     </Box>
   );
 };

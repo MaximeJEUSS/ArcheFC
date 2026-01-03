@@ -5,7 +5,11 @@ const prisma = new PrismaClient();
 
 export const getAllTeams = async (req: Request, res: Response) => {
   try {
-    const teams = await prisma.team.findMany();
+    const teams = await prisma.team.findMany({
+      orderBy: {
+        name: 'asc'
+      }
+    });
     res.json(teams);
   } catch (error) {
     console.error('Erreur lors de la récupération des équipes:', error);
@@ -26,7 +30,8 @@ export const getTeamsFFFConfig = async (req: Request, res: Response) => {
       select: {
         id: true,
         competId: true,
-        pouleId: true
+        pouleId: true,
+        category: true
       }
     });
     
@@ -34,7 +39,8 @@ export const getTeamsFFFConfig = async (req: Request, res: Response) => {
     const fffConfig = teams.map((team) => ({
       id: team.id, // identifiant technique en base
       competId: team.competId!,
-      pouleId: team.pouleId!
+      pouleId: team.pouleId!,
+      category: team.category
     }));
     
     res.json(fffConfig);
