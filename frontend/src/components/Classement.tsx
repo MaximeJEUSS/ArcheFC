@@ -264,7 +264,7 @@ const Classement: React.FC = () => {
         // Filtrer uniquement les équipes qui ont competId et pouleId (nécessaires pour FFF)
         const teamsWithConfig = teamsData.filter(team => team.competId && team.pouleId);
         // Trier par nom pour correspondre à l'ordre de getTeamsFFFConfig
-        teamsWithConfig.sort((a, b) => a.name.localeCompare(b.name));
+        teamsWithConfig.sort((a, b) => a.id.localeCompare(b.id));
         setTeams(teamsWithConfig);
         // Vider le cache de la config FFF pour forcer le rechargement avec toutes les équipes
         const { clearTeamsConfigCache } = await import('../services/teamConfigService');

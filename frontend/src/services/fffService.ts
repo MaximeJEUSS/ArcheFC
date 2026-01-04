@@ -286,7 +286,7 @@ export const fffService = {
 
         allMatches = [...allMatches, ...matches];
         
-        if (!response.data['hydra:view']['hydra:next']) {
+        if (!response.data['hydra:view'] || !response.data['hydra:view']['hydra:next']) {
           hasNextPage = false;
         } else {
           currentPage++;
