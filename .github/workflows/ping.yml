@@ -3,6 +3,7 @@ name: Keep Alive Ping
 on:
   schedule:
     - cron: "*/14 * * * *"
+  workflow_dispatch:
 
 jobs:
   ping:
