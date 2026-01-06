@@ -1,0 +1,12 @@
+name: Keep Alive Ping
+
+on:
+  schedule:
+    - cron: "*/14 * * * *"
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping backend
+        run: curl -s https://archefc-backend.onrender.com/api/teams/fff-config
